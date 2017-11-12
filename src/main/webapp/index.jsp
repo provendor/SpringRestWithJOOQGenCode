@@ -16,8 +16,7 @@
 	<h2 align="center">Welcome to Spring REST with CUBRID DB Access
 		Project</h2>
 	<div class="points">
-		<p>Type "tables" to get list of tables in Database</p>
-		<p>Type "table/{tablename}" to get Contents of a table</p>
+		<p>Type "Users" to get list of Users registered in ProVenorDB</p>
 	</div>
 </body>
 </html>

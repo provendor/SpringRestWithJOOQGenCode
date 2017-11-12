@@ -1,28 +1,49 @@
 package org.restcontroller.controller;
 
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import org.database.cubrid.CubridDBAccess;
-import org.springframework.web.bind.annotation.PathVariable;
+
+import org.jooq.DSLContext;
+import org.jooq.Record3;
+import org.jooq.Result;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import provendordb.connection.CUBRIDDBConnection;
+import provendordb.tables.Provuser;
+
 @RestController
 public class SpringRestController {
 	
-	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/tables", method = RequestMethod.GET,headers="Accept=application/json")
+	@RequestMapping(value = "/Users", method = RequestMethod.GET,headers="Accept=application/json")
 	public String getCompleteTables() throws SQLException
 	{
-		CubridDBAccess.getConnection();
-		return CubridDBAccess.getCompleteTables();
+		DSLContext dbConn = CUBRIDDBConnection.getConnection();
+		Result<Record3<Integer, String, String>> recordsList = dbConn.select(Provuser.PROVUSER.PROVUSERID, Provuser.PROVUSER.PROVUSERFIRSTNAME, Provuser.PROVUSER.PROVUSERLASTNAME)
+					.from(Provuser.PROVUSER).fetch();
+		return convertResultSetToJson(recordsList.intoResultSet());
 	}
-	
-	@RequestMapping(value = "/table/{tableName}", method = RequestMethod.GET,headers="Accept=application/json")
-	public String getTableData(@PathVariable String tableName) throws SQLException
+	@SuppressWarnings("unchecked")
+	public static String convertResultSetToJson(ResultSet resultSet) throws SQLException
 	{
-		CubridDBAccess.getConnection();
-		return CubridDBAccess.getCompleteTableData(tableName);
-	}
+	    JSONArray json = new JSONArray();
+	    ResultSetMetaData metadata = resultSet.getMetaData();
+	    int numColumns = metadata.getColumnCount();
 
+	    while(resultSet.next())             //iterate rows
+	    {
+	        JSONObject obj = new JSONObject();      //extends HashMap
+	        for (int i = 1; i <= numColumns; ++i)           //iterate columns
+	        {
+	            String column_name = metadata.getColumnName(i);
+	            obj.put(column_name, resultSet.getObject(column_name));
+	        }
+	        json.add(obj);
+	    }
+	    return json.toJSONString();
+	}	
 }

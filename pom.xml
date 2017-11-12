@@ -46,6 +46,12 @@
 			<artifactId>cubrid-jdbc</artifactId>
 			<version>8.4.3.1005</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.jooq/jooq -->
+		<dependency>
+		    <groupId>org.jooq</groupId>
+		    <artifactId>jooq</artifactId>
+		    <version>3.6.2</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple -->
 		<dependency>
 			<groupId>com.googlecode.json-simple</groupId>
